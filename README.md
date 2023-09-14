@@ -1,1 +1,1 @@
-The source code and sample data will be available under accepting.
+The source code will be available under accepting.
