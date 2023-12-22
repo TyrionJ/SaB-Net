@@ -79,7 +79,7 @@ class SaBNet(nn.Module):
             t = encoder(t)
             skips.append(t)
 
-        if not self.decoder.deep_supervision or (epoch is not None and epoch > 59):
+        if not self.deep_supervision or (epoch is not None and epoch > 59):
             attn = self.encoders[3][2].attn
             skips = self.ab_layer(x, skips, attn)
 
