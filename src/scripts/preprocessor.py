@@ -67,11 +67,11 @@ class Processor:
             class_locs[k] = selected
         return class_locs
 
-    def extract_fingerprints(self):
-        self.logger(' Processing fingerprints ...')
-        finger_file = join(self.processed_dataset, 'fingerprint.json')
-        if exists(finger_file):
-            return load_json(finger_file)
+    def extract_dactylogram(self):
+        self.logger(' Processing dactylogram ...')
+        dtg_file = join(self.processed_dataset, 'dactylogram.json')
+        if exists(dtg_file):
+            return load_json(dtg_file)
 
         imgs_folder = join(self.raw_dataset, 'imagesTr')
         lbls_folder = join(self.raw_dataset, 'labelsTr')
@@ -90,7 +90,7 @@ class Processor:
         spacings = [i[0] for i in results]
         foregrounds = np.concatenate([i[1] for i in results])
 
-        finger_obj = {
+        dtg_obj = {
             'foreground_properties': {
                 'mean': float(np.mean(foregrounds)),
                 'std': float(np.std(foregrounds)),
@@ -99,9 +99,9 @@ class Processor:
             },
             'spacing': list(np.median(spacings, axis=0))
         }
-        save_json(finger_obj, finger_file)
+        save_json(dtg_obj, dtg_file)
 
-        return finger_obj
+        return dtg_obj
 
     def save_data(self, image_file, seg_file, foreground_properties, new_spacing, img_key):
         itk_img = sitk.ReadImage(image_file)
@@ -158,6 +158,6 @@ class Processor:
         self.logger(f'Preprocessing dataset {self.dataset_name} ...')
         img_keys = [i[:-7] for i in sorted(os.listdir(join(self.raw_dataset, 'imagesTr'))) if i.endswith('.nii.gz')]
 
-        fpts = self.extract_fingerprints()
-        self.process_data(fpts, img_keys)
+        dtg = self.extract_dactylogram()
+        self.process_data(dtg, img_keys)
         self.split_dataset(img_keys)
