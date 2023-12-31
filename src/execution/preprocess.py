@@ -19,8 +19,7 @@ def run_preprocess():
     parser.add_argument('-D', type=int, default=1)
     args = parser.parse_args()
 
-    tr = Processor(dataset_id=args.D, raw_folder=args.r, processed_folder=args.p)
-    tr.run()
+    Processor(dataset_id=args.D, raw_folder=args.r, processed_folder=args.p).run()
 
 
 if __name__ == '__main__':
