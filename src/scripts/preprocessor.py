@@ -9,7 +9,7 @@ from utils.normalization import CTNormalize
 from utils.waiting_process import waiting_proc
 from utils.resampling import resize_seg, resize_img, compute_new_shape
 from utils.folder_file_operator import maybe_mkdir, load_json, save_json, save_pickle
-
+from utils.wellcome import wellcome
 
 num_foreground_voxels = 10e7
 rs = np.random.RandomState(123456)
@@ -22,6 +22,7 @@ class Processor:
         self.processed_dataset = join(processed_folder, self.dataset_name)
         maybe_mkdir(self.processed_dataset)
         self.logger = logger or print
+        wellcome()
 
     @staticmethod
     def get_dataset_name(dataset_id, raw_folder):
