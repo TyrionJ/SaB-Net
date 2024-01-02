@@ -7,7 +7,7 @@ def run_predict():
 
     parser.add_argument('-i', type=str, default='../../data/SaB_raw/Dataset001_GTS/imagesTr')
     parser.add_argument('-o', type=str, default='../../data/SaB_raw/Dataset001_GTS/preds')
-    parser.add_argument('-r', type=str, default='/remote-home/hejj/Data/runtime/SaB_Folder/SaB_results')
+    parser.add_argument('-r', type=str, default='../../data/SaB_results')
     parser.add_argument('-d', type=str, default='0')
     parser.add_argument('-D', type=int, default=1)
     args = parser.parse_args()
