@@ -62,6 +62,7 @@ class SaBNet(nn.Module):
         ])
 
         self.deep_supervision = False
+        self.attn_early = 40
         print(f'SaBNet initialized: in_chs={in_chs}, out_chs={out_chs}, num_heads={num_heads}')
 
     def train(self, mode: bool = True):
@@ -79,7 +80,7 @@ class SaBNet(nn.Module):
             t = encoder(t)
             skips.append(t)
 
-        if not self.deep_supervision or (epoch is not None and epoch > 59):
+        if not self.deep_supervision or (epoch is not None and epoch > self.attn_early):
             attn = self.encoders[3][2].attn
             skips = self.ab_layer(x, skips, attn)
 
