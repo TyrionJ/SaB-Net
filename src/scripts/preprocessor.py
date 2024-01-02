@@ -104,25 +104,33 @@ class Processor:
 
         return dtg_obj
 
-    def save_data(self, image_file, seg_file, foreground_properties, new_spacing, img_key):
+    @staticmethod
+    def run_case(img_data, seg_data, dactylogram, ori_spacing):
+        ori_shape = img_data.shape
+        new_shape = compute_new_shape(ori_shape, ori_spacing, dactylogram['spacing'])
+        img_data = CTNormalize(img_data, dactylogram['foreground_properties'])
+
+        img_data = resize_img(img_data, new_shape).astype(np.float32)
+        seg_data = resize_seg(seg_data, new_shape).astype(np.int8)
+
+        return img_data, seg_data
+
+    def save_data(self, image_file, seg_file, dtg, img_key):
         itk_img = sitk.ReadImage(image_file)
         itk_seg = sitk.ReadImage(seg_file)
 
         npy_img = sitk.GetArrayFromImage(itk_img)
         npy_seg = sitk.GetArrayFromImage(itk_seg)
-        spacing = itk_img.GetSpacing()[::-1]
         ori_shape = npy_img.shape
-        new_shape = compute_new_shape(ori_shape, spacing, new_spacing)
-        npy_img = CTNormalize(npy_img, foreground_properties)
+        ori_spacing = itk_img.GetSpacing()[::-1]
 
-        npy_img = resize_img(npy_img, new_shape).astype(np.float32)
-        npy_seg = resize_seg(npy_seg, new_shape).astype(np.int8)
+        npy_img, npy_seg = self.run_case(npy_img, npy_seg, dtg, ori_spacing)
 
         to_fdr = join(self.processed_dataset, 'data')
         np.save(join(to_fdr, f'{img_key}_img.npy'), npy_img[None])
         np.save(join(to_fdr, f'{img_key}_seg.npy'), npy_seg[None])
         save_pickle({
-            'original_shape': ori_shape, 'spacing': spacing,
+            'original_shape': ori_shape, 'ori_spacing': ori_spacing,
             'class_locs': self.sample_foreground_locations(npy_seg, [1])
         }, join(to_fdr, f'{img_key}.pkl'))
 
@@ -140,7 +148,7 @@ class Processor:
                 })
             save_json(splits, join(self.processed_dataset, 'splits.json'))
 
-    def process_data(self, fpts, img_keys):
+    def process_data(self, dtg, img_keys):
         self.logger(' Processing data ...')
         imgs_folder = join(self.raw_dataset, 'imagesTr')
         lbls_folder = join(self.raw_dataset, 'labelsTr')
@@ -150,9 +158,7 @@ class Processor:
             for img_key in img_keys:
                 image_file = join(imgs_folder, f'{img_key}.nii.gz')
                 seg_file = join(lbls_folder, f'{img_key}.nii.gz')
-                fp = fpts['foreground_properties']
-                spacing = fpts['spacing']
-                r.append(p.starmap_async(self.save_data, ((image_file, seg_file, fp, spacing, img_key),)))
+                r.append(p.starmap_async(self.save_data, ((image_file, seg_file, dtg, img_key),)))
             waiting_proc(r, p)
 
     def run(self):

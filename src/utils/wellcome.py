@@ -1,5 +1,5 @@
-def wellcome():
-    print("\n###################################################################################################\n"
+def wellcome(logger=print):
+    logger("\n###################################################################################################\n"
           " Please cite the following paper when using SaB-Net:\n"
           " He, J., Zhang, M., Li, W., Peng, Y., Fu, B., Liu, C., Wang, J., & Wang, R.\n"
           " SaB-Net: Self-attention backward network for gastric tumor segmentation in CT images[J].\n"

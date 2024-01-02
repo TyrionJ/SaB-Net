@@ -7,8 +7,8 @@ if platform.system().lower() == 'windows':
     pf = r'F:\Data\runtime\SaB_Folder\SaB_processed'
     rf = r'F:\Data\runtime\SaB_Folder\SaB_raw'
 else:
-    pf = '/remote-home/hejj/Data/runtime/mQSM/mQSM_processed'
-    rf = '/remote-home/hejj/Data/runtime/mQSM/mQSM_raw'
+    pf = '/remote-home/hejj/Data/runtime/SaB_Folder/SaB_processed'
+    rf = '/remote-home/hejj/Data/runtime/SaB_Folder/SaB_raw'
 
 
 def run_preprocess():
