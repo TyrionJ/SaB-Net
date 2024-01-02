@@ -43,7 +43,7 @@ class SaBNet(nn.Module):
                           ConvDropoutNormReLU(32, 32, (3, 3, 3), (1, 1, 1))),
         ])
 
-        self.trans_convs = nn.ModuleList([
+        self.transpconvs = nn.ModuleList([
             nn.ConvTranspose3d(320, 320, kernel_size=(1, 2, 2), stride=(1, 2, 2)),
             nn.ConvTranspose3d(320, 320, kernel_size=(1, 2, 2), stride=(1, 2, 2)),
             nn.ConvTranspose3d(320, 256, kernel_size=(2, 2, 2), stride=(2, 2, 2)),
@@ -63,7 +63,6 @@ class SaBNet(nn.Module):
 
         self.deep_supervision = False
         self.attn_early = 40
-        print(f'SaBNet initialized: in_chs={in_chs}, out_chs={out_chs}, num_heads={num_heads}')
 
     def train(self, mode: bool = True):
         super().train(mode)
@@ -87,7 +86,7 @@ class SaBNet(nn.Module):
         seg_outputs = []
         lup_inp = skips[-1]
         for i in range(len(self.stages)):
-            x = self.trans_convs[i](lup_inp)
+            x = self.transpconvs[i](lup_inp)
             x = torch.cat((x, skips[-(i+2)]), 1)
             x = self.stages[i](x)
             seg_outputs.append(self.seg_layers[i](x))

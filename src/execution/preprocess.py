@@ -1,21 +1,13 @@
 import argparse
-import platform
 
 from scripts.preprocessor import Processor
-
-if platform.system().lower() == 'windows':
-    pf = r'F:\Data\runtime\SaB_Folder\SaB_processed'
-    rf = r'F:\Data\runtime\SaB_Folder\SaB_raw'
-else:
-    pf = '/remote-home/hejj/Data/runtime/SaB_Folder/SaB_processed'
-    rf = '/remote-home/hejj/Data/runtime/SaB_Folder/SaB_raw'
 
 
 def run_preprocess():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-p', type=str, default=pf)
-    parser.add_argument('-r', type=str, default=rf)
+    parser.add_argument('-p', type=str, default='../../data/SaB_processed')
+    parser.add_argument('-r', type=str, default='../../data/SaB_raw')
     parser.add_argument('-D', type=int, default=1)
     args = parser.parse_args()
 

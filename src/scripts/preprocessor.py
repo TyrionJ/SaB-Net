@@ -111,7 +111,8 @@ class Processor:
         img_data = CTNormalize(img_data, dactylogram['foreground_properties'])
 
         img_data = resize_img(img_data, new_shape).astype(np.float32)
-        seg_data = resize_seg(seg_data, new_shape).astype(np.int8)
+        if seg_data is not None:
+            seg_data = resize_seg(seg_data, new_shape).astype(np.int8)
 
         return img_data, seg_data
 
