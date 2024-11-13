@@ -38,4 +38,4 @@ python execution/predict.py -i [input_folder] -o [output_folder] -r [SaB_results
 ```
 
 ### Train   
-Working on
+Working on. Put the model into the nnUNet framework for training.
