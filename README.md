@@ -32,10 +32,12 @@ pip install -r requirements.txt
 python execution/preprocess.py -r [SaB_raw folder] -p [SaB_processed folder] -D [dataset_ID] 
 ```
 
-### Predict
+### Train   
 ```python
-python execution/predict.py -i [input_folder] -o [output_folder] -r [SaB_results folder] -d [cpu|gpu] -D [dataset_ID]
+python execution/train.py -p [SaB_processed folder] -r [SaB_results folder] -f [fold] -D [dataset_ID] -d [cpu|gpu_index]
 ```
 
-### Train   
-Working on. Put the model into the nnUNet framework for training.
+### Predict
+```python
+python execution/predict.py -i [input_folder] -o [output_folder] -r [SaB_results folder] -D [dataset_ID] -d [cpu|gpu_index]
+```
