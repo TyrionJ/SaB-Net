@@ -64,14 +64,6 @@ class SaBNet(nn.Module):
         self.deep_supervision = False
         self.attn_early = 40
 
-    def train(self, mode: bool = True):
-        super().train(mode)
-        self.deep_supervision = True
-
-    def eval(self):
-        super().eval()
-        self.deep_supervision = False
-
     def forward(self, x, epoch=None):
         skips = []
         t = x

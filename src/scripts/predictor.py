@@ -10,8 +10,8 @@ from scipy.ndimage import gaussian_filter
 from acvl_utils.cropping_and_padding.padding import pad_nd_image
 
 from network import SaBNet
+from utils.helpers import say_hi
 from .preprocessor import Processor
-from utils.wellcome import wellcome
 from utils.folder_file_operator import maybe_mkdir, empty_cache, dummy_context
 
 
@@ -33,9 +33,10 @@ class Predictor:
         self.patch_size = (64, 256, 256)
         self.network = SaBNet(in_chs=self.in_chs, out_chs=self.out_chs)
 
-        self.load_dactylogram()
-        wellcome(self.logger)
-        maybe_mkdir(output_folder)
+        if output_folder:
+            self.load_dactylogram()
+            say_hi(self.logger)
+            maybe_mkdir(output_folder)
 
     @staticmethod
     def get_dataset_name(dataset_id, results_folder):
@@ -46,7 +47,7 @@ class Predictor:
         raise f'The requested dataset {dataset_id} could not be found in {results_folder}'
 
     def processed_generator(self):
-        image_list = sorted([i for i in os.listdir(self.input_folder) if i.endswith('.nii.gz')])
+        image_list = sorted([i for i in os.listdir(self.input_folder) if i.endswith('.nii.gz') or i.endswith('.nii')])
 
         self.logger(f'There are {len(image_list)} case(s) to predict:\n')
 
@@ -67,7 +68,7 @@ class Predictor:
         checkpoint = torch.load(join(self.result_dataset, folds[0], 'checkpoint_final.pth'), map_location='cpu')
         self.dtg = checkpoint['dactylogram']
 
-    def sliding_return_logits(self, input_image, fold):
+    def sliding_return_logits(self, input_image, desc):
         self.network = self.network.to(self.device)
         self.network.eval()
         empty_cache(self.device)
@@ -86,7 +87,7 @@ class Predictor:
                                                 device=self.device)
 
                 empty_cache(self.device)
-                for sl in tqdm(slicers, desc=f'  {fold}', colour='green'):
+                for sl in tqdm(slicers, desc=desc, colour='green'):
                     workon = data[sl][None].to(self.device, non_blocking=False)
                     prediction = self._mirror_and_predict(workon)[0]
 
@@ -107,9 +108,9 @@ class Predictor:
                 self.network.load_state_dict(checkpoint['network_weights'])
 
                 if prediction is None:
-                    prediction = self.sliding_return_logits(data, fold)
+                    prediction = self.sliding_return_logits(data, f'  {fold}')
                 else:
-                    prediction += self.sliding_return_logits(data, fold)
+                    prediction += self.sliding_return_logits(data, f'  {fold}')
 
         return prediction / len(folds)
 

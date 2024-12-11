@@ -5,11 +5,11 @@ import multiprocessing as mp
 from os.path import join, isdir, exists
 from sklearn.model_selection import KFold
 
+from utils.helpers import say_hi
 from utils.normalization import CTNormalize
 from utils.waiting_process import waiting_proc
 from utils.resampling import resize_seg, resize_img, compute_new_shape
 from utils.folder_file_operator import maybe_mkdir, load_json, save_json, save_pickle
-from utils.wellcome import wellcome
 
 num_foreground_voxels = 10e7
 rs = np.random.RandomState(123456)
@@ -22,7 +22,7 @@ class Processor:
         self.processed_dataset = join(processed_folder, self.dataset_name)
         maybe_mkdir(self.processed_dataset)
         self.logger = logger or print
-        wellcome()
+        say_hi(self.logger)
 
     @staticmethod
     def get_dataset_name(dataset_id, raw_folder):
@@ -132,6 +132,7 @@ class Processor:
         np.save(join(to_fdr, f'{img_key}_seg.npy'), npy_seg[None])
         save_pickle({
             'original_shape': ori_shape, 'ori_spacing': ori_spacing,
+            'origin':  itk_img.GetOrigin(), 'direction': itk_img.GetDirection(),
             'class_locs': self.sample_foreground_locations(npy_seg, [1])
         }, join(to_fdr, f'{img_key}.pkl'))
 

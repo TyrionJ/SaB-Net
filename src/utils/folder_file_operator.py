@@ -7,7 +7,7 @@ __all__ = ['save_pickle', 'save_json', 'load_json', 'load_pickle', 'maybe_mkdir'
 
 
 def maybe_mkdir(Dir):
-    if not os.path.exists(Dir):
+    if Dir and not os.path.exists(Dir):
         os.makedirs(Dir)
 
 
