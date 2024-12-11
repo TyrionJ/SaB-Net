@@ -8,10 +8,10 @@ code_directory = os.path.dirname(__file__)
 def run_predict():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-i', type=str, default=f'{code_directory}/../../data/SaB_raw/Dataset001_GTS/imagesTr')
-    parser.add_argument('-o', type=str, default=f'{code_directory}/../../data/SaB_raw/Dataset001_GTS/preds')
+    parser.add_argument('-i', type=str, default=f'{code_directory}/../../data/SaB_raw/Dataset001_GTS/imagesTr', help='input dir')
+    parser.add_argument('-o', type=str, default=f'{code_directory}/../../data/SaB_raw/Dataset001_GTS/preds', help='output dir')
     parser.add_argument('-r', type=str, default=f'{code_directory}/../../data/SaB_results', help='results folder')
-    parser.add_argument('-d', type=str, default='1', help='cpu or CUDA device')
+    parser.add_argument('-d', type=str, default='1', help='device: cpu or 0, 1, 2, ...')
     parser.add_argument('-D', type=int, default=1, help='dataset ID')
     args = parser.parse_args()
 

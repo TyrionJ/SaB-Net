@@ -8,7 +8,7 @@ def run_preprocess():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-p', type=str, default=f'{code_directory}/../../data/SaB_processed', help='processed folder')
-    parser.add_argument('-r', type=str, default=f'{code_directory}/../../data/SaB_raw')
+    parser.add_argument('-r', type=str, default=f'{code_directory}/../../data/SaB_raw', help='raw data folder')
     parser.add_argument('-D', type=int, default=1, help='dataset ID')
     args = parser.parse_args()
 
