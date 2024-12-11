@@ -23,6 +23,7 @@ class Predictor:
         self.output_folder = output_folder
         self.logger = logger or print
         self.device = torch.device('cpu') if device == 'cpu' else torch.device(f'cuda:{device}')
+        self.data_size = 0
 
         self.dtg = None
         self.in_chs = 1
@@ -48,7 +49,7 @@ class Predictor:
 
     def processed_generator(self):
         image_list = sorted([i for i in os.listdir(self.input_folder) if i.endswith('.nii.gz') or i.endswith('.nii')])
-
+        self.data_size = len(image_list)
         self.logger(f'There are {len(image_list)} case(s) to predict:\n')
 
         for img_file in image_list:
@@ -65,7 +66,7 @@ class Predictor:
         folds = [i for i in os.listdir(self.result_dataset) if i.startswith('fold_')
                  and isfile(join(self.result_dataset, i, 'checkpoint_final.pth'))]
         assert len(folds) > 0, 'No valid checkpoint'
-        checkpoint = torch.load(join(self.result_dataset, folds[0], 'checkpoint_final.pth'), map_location='cpu')
+        checkpoint = torch.load(join(self.result_dataset, folds[0], 'checkpoint_final.pth'))
         self.dtg = checkpoint['dactylogram']
 
     def sliding_return_logits(self, input_image, desc):
@@ -104,7 +105,7 @@ class Predictor:
         with torch.no_grad():
             prediction = None
             for fold in sorted(folds):
-                checkpoint = torch.load(join(self.result_dataset, fold, 'checkpoint_final.pth'), map_location='cpu')
+                checkpoint = torch.load(join(self.result_dataset, fold, 'checkpoint_final.pth'))
                 self.network.load_state_dict(checkpoint['network_weights'])
 
                 if prediction is None:
@@ -117,8 +118,8 @@ class Predictor:
     def run(self):
         processed_generator = self.processed_generator()
 
-        for data, meta_info, img_file in processed_generator:
-            self.logger(f'Predicting {img_file[:-7]}:')
+        for N, (data, meta_info, img_file) in enumerate(processed_generator):
+            self.logger(f'[{N + 1}/{self.data_size}] Predicting {img_file[:-7]}:')
             self.logger(f'  Data shape: {list(meta_info[0])}, Input shape: {list(data.shape)}')
 
             logits = self.logits_from_preprocessed(data)
