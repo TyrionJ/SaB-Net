@@ -272,6 +272,7 @@ class NetTrainer:
 
         predictor = Predictor(self.dataset_id, self.result_folder, '', '', self.device.index or 'cpu')
         predictor.network = self.network
+        predictor.network.deep_supervision = False
 
         train_indices, valid_indices = self.get_tr_vd_indices(False)
         mean_Dice = 0
